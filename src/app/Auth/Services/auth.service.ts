@@ -40,13 +40,22 @@ login(credentials: LoginRequest): Observable<LoginResponse> {
   }
 
   // Método auxiliar para redireccionar según rol
+  // Método auxiliar para redireccionar según rol
   redirectBasedOnRole(): void {
     const role = this.tokenService.getUserRole();
+    
     switch (role) {
-      case 'CLIENTE': this.router.navigate(['/menu-cliente']); break;
-      case 'PASTELERO': this.router.navigate(['/mozo-menu']); break;
-      case 'ADMIN': this.router.navigate(['/cajero-menu']); break;
-      default: this.router.navigate(['']); 
+      case 'CLIENTE': 
+        this.router.navigate(['/menu-cliente']); 
+        break;
+      case 'PASTELERO': 
+        this.router.navigate(['/menu-pastelero']); 
+        break;
+      case 'ADMIN': 
+        this.router.navigate(['/menu-admin']); 
+        break;
+      default: 
+        this.router.navigate(['/']); 
     }
   }
 }
