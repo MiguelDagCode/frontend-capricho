@@ -1,0 +1,48 @@
+:host {
+  --brand-primary: #d14d68;
+  --brand-footer-bg: #3e2f26;
+}
+
+.font-serif {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Forzamos que el header siempre esté por encima de cualquier otro elemento sticky */
+.main-header {
+  z-index: 1050 !important; 
+}
+
+.bg-brand-primary {
+  background-color: var(--brand-primary) !important;
+}
+
+.bg-brand-footer {
+  background-color: var(--brand-footer-bg) !important;
+}
+
+.text-brand-primary {
+  color: var(--brand-primary) !important;
+}
+
+.cart-badge {
+  font-size: 0.6rem;
+}
+
+.nav-action-link {
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-action-link:hover {
+  color: var(--brand-primary) !important;
+}
+
+.w-20px {
+  width: 20px;
+}
+
+.footer-logo {
+  height: 30px;
+  filter: brightness(0) invert(1);
+}

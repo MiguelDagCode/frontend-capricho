@@ -1,0 +1,70 @@
+:host {
+  --brand-primary: #d14d68;
+  --brand-primary-dark: #a3182d;
+  --bg-crema: #faf7f5;
+  display: block;
+}
+
+.font-serif {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.bg-brand-primary {
+  background-color: var(--brand-primary) !important;
+}
+
+.text-brand-primary {
+  color: var(--brand-primary) !important;
+}
+
+/* Botón Principal de la Marca */
+.btn-brand-primary {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: white;
+}
+.btn-brand-primary:hover, .btn-brand-primary:focus {
+  background-color: var(--brand-primary-dark);
+  border-color: var(--brand-primary-dark);
+  color: white;
+}
+
+/* Píldoras de Selección */
+.btn-choice {
+  background-color: var(--bg-crema);
+  border: 1px solid transparent;
+  color: #555;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+.btn-choice:hover {
+  background-color: #ebe5df;
+}
+.btn-check:checked + .btn-choice {
+  background-color: transparent;
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.quantity-selector { width: fit-content; }
+.quantity-selector button:focus { box-shadow: none; }
+.w-40px { width: 40px; }
+
+.object-fit-cover { object-fit: cover; }
+.transition-colors { transition: color 0.2s ease; }
+.nav-back-link:hover { color: var(--brand-primary) !important; }
+.transition-transform { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+
+/* LA SOLUCIÓN AL BUG */
+@media (min-width: 992px) {
+  .product-image-wrapper {
+    top: 100px !important; /* Mantiene la imagen debajo del header al scrollear */
+    z-index: 10; /* Se asegura de no competir con el z-index 1050 del header */
+  }
+}

@@ -1,0 +1,73 @@
+:host {
+  --brand-primary: #d14d68;
+  --brand-primary-dark: #a3182d;
+  display: block;
+}
+
+/* Tipografía */
+.font-serif {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Colores Dinámicos */
+.text-brand-primary {
+  color: var(--brand-primary) !important;
+}
+
+/* Botón Principal */
+.btn-brand-primary {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: white;
+}
+
+.btn-brand-primary:hover, .btn-brand-primary:focus {
+  background-color: var(--brand-primary-dark);
+  border-color: var(--brand-primary-dark);
+  color: white;
+}
+
+/* Estilos de los Inputs para coincidir con tu diseño limpio */
+.custom-input {
+  border: 1px solid #e0e0e0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-input:focus {
+  border-color: var(--brand-primary);
+  /* Sombra sutil del color de la marca al hacer foco */
+  box-shadow: 0 0 0 0.25rem rgba(209, 77, 104, 0.15); 
+}
+
+/* Utilidades de Micro-interacción */
+.min-vh-75 {
+  min-height: 75vh; /* Asegura que la tarjeta quede centrada si hay poco contenido */
+}
+
+.transition-colors {
+  transition: color 0.2s ease;
+}
+
+.nav-back-link:hover {
+  color: var(--brand-primary) !important;
+}
+
+.auth-toggle-link:hover {
+  color: var(--brand-primary-dark) !important;
+  text-decoration: underline !important;
+}
+
+.transition-transform {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+}
+
+/* Tarjeta de Autenticación */
+.auth-card {
+  /* Hacemos la sombra ligeramente más difuminada para ese efecto "flotante" elegante */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
