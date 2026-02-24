@@ -84,4 +84,7 @@ export class CarroService {
     const itemsFiltrados = this.cartSubject.getValue().filter(item => item.productoId !== productoId);
     this.cartSubject.next(itemsFiltrados);
   }
+  vaciarCarrito(): void {
+    this.cartSubject.next([]);
+  }
 }

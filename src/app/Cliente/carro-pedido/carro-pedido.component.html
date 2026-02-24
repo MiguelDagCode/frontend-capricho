@@ -65,7 +65,34 @@
 
         </div>
       </div>
+<div class="card border-0 shadow-sm rounded-4 p-4 mt-4 bg-white">
+        <h4 class="font-serif fw-bold text-dark mb-4">Detalles de Envío</h4>
 
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label text-muted fw-medium">Método de entrega</label>
+            <select class="form-select rounded-3 p-2 bg-light border-0" [(ngModel)]="tipoEnvio">
+              <option value="DELIVERY">Delivery a domicilio</option>
+              <option value="RECOJO_TIENDA">Recojo en Tienda</option>
+            </select>
+          </div>
+
+          <div class="col-md-6" *ngIf="tipoEnvio === 'DELIVERY'">
+            <label class="form-label text-muted fw-medium">Distrito</label>
+            <select class="form-select rounded-3 p-2 bg-light border-0" [(ngModel)]="idDistrito">
+              <option *ngFor="let dist of distritos" [value]="dist.id">{{ dist.nombre }}</option>
+            </select>
+          </div>
+
+          <div class="col-12" *ngIf="tipoEnvio === 'DELIVERY'">
+            <label class="form-label text-muted fw-medium">Dirección exacta y referencias</label>
+            <input type="text" 
+                   class="form-control rounded-3 p-2 bg-light border-0" 
+                   placeholder="Ej: Av. Tupac Amaru Mz A Lote 1, cerca al parque..." 
+                   [(ngModel)]="direccionEntrega">
+          </div>
+        </div>
+      </div>
       <div class="card border-0 shadow-sm rounded-4 p-4 mt-4" style="background-color: #f8f9fa;">
         <div class="d-flex justify-content-between mb-3">
           <span class="text-muted fw-medium">Subtotal</span>
@@ -78,10 +105,11 @@
         </div>
         
         <button class="btn w-100 rounded-pill py-3 fw-bold text-white fs-5 transition-transform hover-lift" 
-                style="background-color: #d14d68; border:none;" 
-                (click)="generarPedido()">
-          Continuar Compra
-        </button>
+        style="background-color: #d14d68; border:none;" 
+        (click)="generarPedido()"
+        [disabled]="isProcesando || (totalItems$ | async) === 0">
+  {{ isProcesando ? 'Generando orden...' : 'Continuar Compra' }}
+</button>
       </div>
 
     </div>
