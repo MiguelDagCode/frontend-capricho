@@ -30,13 +30,14 @@ export const routes: Routes = [
     data: { roles: ['ADMIN'] } 
   },
 
-  // RUTA SOLO PARA PASTELERO (Y el Admin si quieres que supervise)
+  // RUTA SOLO PARA PASTELERO
   { 
     path: 'menu-pastelero', 
     component: MenuPasteleroComponent,
     canActivate: [roleGuard],
-    data: { roles: ['PASTELERO', 'ADMIN'] } 
+    data: { roles: ['PASTELERO'] } 
   },
 
+  // Ruta comodín por si escriben mal la URL
   { path: '**', redirectTo: '' } 
 ];

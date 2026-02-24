@@ -15,41 +15,43 @@ import { CarroService } from './Services/Carro/carro-service.service';
 })
 export class AppComponent implements OnInit {
   totalItemsEnCarrito$: Observable<number>;
-
   title = 'capricho-dulce-frontend';
-  
-  // Variable reactiva para saber si está logueado
+
   isLoggedIn$: Observable<boolean>;
+  
+  // Tu estructura base (La mejor forma)
   userRole: string | null = null;
-  // Variable para guardar el correo a mostrar
   userEmail: string | null = '';
+  
+  // La variable de tu compañero (La mantenemos para no romper su HTML)
+  esPastelero: boolean = false;
+
   constructor(
     private authService: AuthService,
     private tokenService: TokenService,
     private carroService: CarroService
   ) {
-    // Escuchamos el estado global de la autenticación
     this.isLoggedIn$ = this.authService.isLoggedIn$;
     this.totalItemsEnCarrito$ = this.carroService.getTotalItems();
   }
 
   ngOnInit(): void {
-    // Cada vez que el estado cambie (entra o sale), actualizamos el correo
     this.isLoggedIn$.subscribe(isLoggedIn => {
       if (isLoggedIn) {
         this.userEmail = this.tokenService.getUserName();
-        this.userRole = this.tokenService.getUserRole(); // <-- Guardamos el rol
+        this.userRole = this.tokenService.getUserRole(); // Guardamos el rol global
+        
+        // Alimentamos su bandera usando tu estructura
+        this.esPastelero = this.userRole === 'PASTELERO'; 
       } else {
         this.userEmail = null;
         this.userRole = null;
+        this.esPastelero = false;
       }
     });
   }
 
-  // Método que llamaremos desde el HTML
   logout(): void {
     this.authService.logout();
-  
   }
-  
 }
