@@ -74,7 +74,7 @@
             <!--tipo de entrega-->
             <span class="kds-entrega-badge" [class.kds-entrega--delivery]="pedido.tipoEntrega === 'DELIVERY'">
               <svg *ngIf="pedido.tipoEntrega === 'DELIVERY'" xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-              <svg *ngIf="pedido.tipoEntrega === 'EN_TIENDA'" xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+              <svg *ngIf="pedido.tipoEntrega === 'RECOJO_TIENDA'" xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
               {{ pedido.tipoEntrega === 'DELIVERY' ? 'Delivery' : 'En tienda' }}
             </span>
           </div>
@@ -88,7 +88,7 @@
         <div class="kds-card-client">
           <div class="kds-client-row">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            <span class="kds-client-name">{{ pedido.nombreCliente }}</span>
+            <span class="kds-client-name">{{ pedido.nombreCliente || 'Cliente' }}</span>
           </div>
           <div class="kds-hora-entrega" *ngIf="pedido.horaEntregaPrometida">
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
@@ -101,13 +101,13 @@
 
         <!--lista de productos-->
         <div class="kds-items-list">
-          <div class="kds-item" *ngFor="let item of pedido.items">
+          <div class="kds-item" *ngFor="let item of pedido.detalles">
             <span class="kds-item-qty">{{ item.cantidad }}x</span>
             <div class="flex-grow-1">
-              <span class="kds-item-name">{{ item.nombre }}</span>
-              <div class="kds-item-spec" *ngIf="item.especificacion">
+              <span class="kds-item-name">{{ item.nombreProducto }}</span>
+              <div class="kds-item-spec" *ngIf="item.observaciones">
                 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                {{ item.especificacion }}
+                {{ item.observaciones }}
               </div>
             </div>
           </div>
@@ -136,7 +136,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                 Merma
               </button>
-              <button class="btn kds-btn-despachar flex-grow-1" (click)="despacharPedido(pedido)">
+              <button class="btn kds-btn-despachar flex-grow-1" (click)="marcarListo(pedido)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 Pedido Listo
               </button>
@@ -172,19 +172,19 @@
       <div class="kds-modal-body">
         <p class="kds-modal-subtitle">
           Pedido <strong>#{{ pedidoSeleccionado?.numeroPedido }}</strong>
-          — Cliente: <strong>{{ pedidoSeleccionado?.nombreCliente }}</strong>
+          — Cliente: <strong>{{ pedidoSeleccionado?.nombreCliente || 'Cliente' }}</strong>
         </p>
 
         <label class="kds-form-label">Ítem afectado</label>
         <div class="kds-item-selector">
           <div
             class="kds-item-option"
-            [class.selected]="itemMermaSeleccionado?.nombre === item.nombre"
-            *ngFor="let item of pedidoSeleccionado?.items"
+            [class.selected]="itemMermaSeleccionado?.idProducto === item.idProducto"
+            *ngFor="let item of pedidoSeleccionado?.detalles"
             (click)="seleccionarItemMerma(item)">
             <span class="kds-item-opt-qty">{{ item.cantidad }}x</span>
-            <span class="flex-grow-1">{{ item.nombre }}</span>
-            <svg class="kds-check-icon" *ngIf="itemMermaSeleccionado?.nombre === item.nombre" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span class="flex-grow-1">{{ item.nombreProducto }}</span>
+            <svg class="kds-check-icon" *ngIf="itemMermaSeleccionado?.idProducto === item.idProducto" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
           </div>
         </div>
 
@@ -193,10 +193,10 @@
           <button
             class="kds-causa-btn"
             *ngFor="let causa of causasMerma"
-            [class.selected]="causaSeleccionada === causa.value"
+            [class.selected]="causaSeleccionada === causa.id"
             (click)="seleccionarCausa(causa.value)">
             <span class="kds-causa-icon">{{ causa.icon }}</span>
-            <span>{{ causa.label }}</span>
+            <span>{{ causa.nombre }}</span>
           </button>
         </div>
       </div>
