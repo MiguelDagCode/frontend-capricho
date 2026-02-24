@@ -1,0 +1,47 @@
+:host {
+  --brand-primary: #d14d68;
+  --brand-primary-dark: #a3182d;
+  --bg-crema: #faf7f5;
+  display: block;
+  /* Aplicamos el fondo crema sutil de tu diseño a todo el componente */
+  background-color: var(--bg-crema); 
+}
+
+/* Tipografía de la marca */
+.font-serif {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Altura mínima para centrado vertical */
+.min-vh-75 {
+  min-height: 75vh;
+}
+
+/* Contenedor central para evitar que los textos se extiendan demasiado en pantallas gigantes */
+.empty-cart-wrapper {
+  max-width: 500px;
+  width: 100%;
+}
+
+/* Botón Principal */
+.btn-brand-primary {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: white;
+}
+
+.btn-brand-primary:hover, .btn-brand-primary:focus {
+  background-color: var(--brand-primary-dark);
+  border-color: var(--brand-primary-dark);
+  color: white;
+}
+
+/* Animación de elevación al hacer hover en el botón */
+.transition-transform {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+}
