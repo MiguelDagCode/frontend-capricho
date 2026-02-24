@@ -1,283 +1,253 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-
-export interface ItemPedido {
-  nombre: string;
-  cantidad: number;
-  especificacion?: string;
-}
-
-export type EstadoPedido = 'PENDIENTE' | 'EN_PREPARACION' | 'LISTO';
-export type TipoEntrega  = 'EN_TIENDA' | 'DELIVERY';
-
-export interface OrdenProduccion {
-  id: number;
-  numeroPedido: string;
-  nombreCliente: string;           
-  tipoEntrega: TipoEntrega;        
-  horaEntregaPrometida?: string;   
-  estado: EstadoPedido;
-  items: ItemPedido[];             
-  timestampLlegada: Date;          
-  minutosEspera: number;           
-  progreso: number;                
-}
-
-export interface CausaMerma {
-  value: string;
-  label: string;
-  icon: string;
-}
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { interval, Subscription } from 'rxjs';
+import { PedidoService, PedidoCocina } from '../../Services/pedido.service';
 
 @Component({
   selector: 'app-menu-pastelero',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './menu-pastelero.component.html',
-  styleUrls: ['./menu-pastelero.component.css']
+  styleUrls: ['./menu-pastelero.component.css'],
 })
 export class MenuPasteleroComponent implements OnInit, OnDestroy {
-  /*Reloj*/
+  constructor(private pedidoService: PedidoService) {}
+
+  pedidos: (PedidoCocina & { numeroPedido?: string })[] = [];
+  pedidosFiltrados: (PedidoCocina & { numeroPedido?: string })[] = [];
+  tabActivo: 'TODOS' | 'PENDIENTE' | 'EN_PREPARACION' | 'LISTO' = 'TODOS';
+
+  pedidosPendientes = 0;
+  pedidosEnPreparacion = 0;
+  pedidosListos = 0;
+
   horaActual: string = '';
-  private relojInterval: any;
-  private timerInterval: any;
+  private relojSubscription?: Subscription;
+  private refreshSubscription?: Subscription;
 
-  /*Tabs*/
-  tabs = [
-    { label: 'Todos',           value: 'TODOS' },
-    { label: 'Pendientes',      value: 'PENDIENTE' },
-    { label: 'En Preparación',  value: 'EN_PREPARACION' },
-    { label: 'Listos',          value: 'LISTO' },
-  ];
-  tabActivo: string = 'TODOS';
+  mostrarModalMerma = false;
+  pedidoSeleccionado?: PedidoCocina & { numeroPedido?: string };
+  itemMermaSeleccionado?: any;
+  causaSeleccionada?: number;
 
-  /*ordenes de producción (datos mock — reemplazar con HTTP)*/
-  ordenes: OrdenProduccion[] = [
-    {
-      id: 1,
-      numeroPedido: '042',
-      nombreCliente: 'María García',
-      tipoEntrega: 'EN_TIENDA',
-      horaEntregaPrometida: '14:30',
-      estado: 'PENDIENTE',
-      timestampLlegada: new Date(Date.now() - 4 * 60000),
-      minutosEspera: 4,
-      progreso: 0,
-      items: [
-        { nombre: 'Torta de Chocolate Premium', cantidad: 1 },
-        { nombre: 'Cupcakes de Vainilla', cantidad: 6, especificacion: 'Sin fresas' },
-      ]
-    },
-    {
-      id: 2,
-      numeroPedido: '041',
-      nombreCliente: 'Carlos Ríos',
-      tipoEntrega: 'DELIVERY',
-      horaEntregaPrometida: '15:00',
-      estado: 'EN_PREPARACION',
-      timestampLlegada: new Date(Date.now() - 22 * 60000),
-      minutosEspera: 22,
-      progreso: 65,
-      items: [
-        { nombre: 'Torta Red Velvet', cantidad: 1, especificacion: 'Más chocolate' },
-      ]
-    },
-    {
-      id: 3,
-      numeroPedido: '040',
-      nombreCliente: 'Sofía Mendoza',
-      tipoEntrega: 'DELIVERY',
-      horaEntregaPrometida: '13:45',
-      estado: 'EN_PREPARACION',
-      timestampLlegada: new Date(Date.now() - 10 * 60000),
-      minutosEspera: 10,
-      progreso: 30,
-      items: [
-        { nombre: 'Cheesecake de Frutos Rojos', cantidad: 2 },
-        { nombre: 'Tres Leches Especial', cantidad: 1 },
-      ]
-    },
-    {
-      id: 4,
-      numeroPedido: '039',
-      nombreCliente: 'Pedro Villanueva',
-      tipoEntrega: 'EN_TIENDA',
-      estado: 'LISTO',
-      timestampLlegada: new Date(Date.now() - 28 * 60000),
-      minutosEspera: 28,
-      progreso: 100,
-      items: [
-        { nombre: 'Combo Dulce Celebración', cantidad: 1 },
-      ]
-    },
-    {
-      id: 5,
-      numeroPedido: '043',
-      nombreCliente: 'Lucía Paredes',
-      tipoEntrega: 'EN_TIENDA',
-      horaEntregaPrometida: '16:00',
-      estado: 'PENDIENTE',
-      timestampLlegada: new Date(Date.now() - 2 * 60000),
-      minutosEspera: 2,
-      progreso: 0,
-      items: [
-        { nombre: 'Cupcakes de Vainilla', cantidad: 12 },
-      ]
-    },
+  tabs: { label: string; value: 'TODOS' | 'PENDIENTE' | 'EN_PREPARACION' | 'LISTO' }[] = [
+    { label: 'Todos', value: 'TODOS' },
+    { label: 'Pendientes', value: 'PENDIENTE' },
+    { label: 'En Preparación', value: 'EN_PREPARACION' },
+    { label: 'Listos', value: 'LISTO' },
   ];
 
-  /*Modal Merma*/
-  mostrarModalMerma: boolean = false;
-  pedidoSeleccionado: OrdenProduccion | null = null;
-  itemMermaSeleccionado: ItemPedido | null = null;
-  causaSeleccionada: string = '';
-
-  /*Causas predefinidas según RF-14*/
-  causasMerma: CausaMerma[] = [
-    { value: 'QUEMADO', label: 'Quemado',  icon: '🔥' },
-    { value: 'CAIDA',   label: 'Caída',    icon: '💥' },
-    { value: 'VENCIDO', label: 'Vencido',  icon: '🗑️' },
+  causasMerma = [
+    { id: 1, nombre: 'Quemado', icon: '🔥', value: 'quemado' },
+    { id: 2, nombre: 'Caída', icon: '💔', value: 'caida' },
+    { id: 3, nombre: 'Vencido', icon: '⏰', value: 'vencido' },
   ];
 
-  constructor(private router: Router) {}
-
-  /*lifecicle*/
   ngOnInit(): void {
-    this.actualizarReloj();
-    this.relojInterval = setInterval(() => this.actualizarReloj(), 1000);
-    this.timerInterval = setInterval(() => this.recalcularTimers(), 60000);
-  }
-
-  ngOnDestroy(): void {
-    clearInterval(this.relojInterval);
-    clearInterval(this.timerInterval);
-  }
-
-  /*helpers*/
-  actualizarReloj(): void {
-    const now = new Date();
-    this.horaActual = now.toLocaleTimeString('es-PE', {
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    this.cargarPedidos();
+    this.iniciarReloj();
+    this.refreshSubscription = interval(30000).subscribe(() => {
+      this.cargarPedidos();
     });
   }
 
-  recalcularTimers(): void {
-    const now = Date.now();
-    this.ordenes = this.ordenes.map(o => ({
-      ...o,
-      minutosEspera: Math.floor((now - o.timestampLlegada.getTime()) / 60000)
-    }));
+  ngOnDestroy(): void {
+    this.refreshSubscription?.unsubscribe();
+    this.relojSubscription?.unsubscribe();
   }
 
-  trackById(index: number, orden: OrdenProduccion): number {
-    return orden.id;
+  cargarPedidos(): void {
+    this.pedidoService.obtenerColaProduccion().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.pedidos = response.data.map((p) => ({
+            ...p,
+            numeroPedido: this.formatearNumeroPedido(p.idPedido),
+            minutosEspera: this.calcularMinutosEspera(p.fechaRegistro),
+            horaEntregaPrometida: this.formatearHoraEntrega(p.fechaRegistro),
+            progreso: p.estado === 'EN_PREPARACION' ? this.calcularProgreso(p.fechaRegistro) : undefined,
+            nombreCliente: p.nombreCliente || `Cliente ${p.idPedido}`,
+          }));
+          
+          this.actualizarStats();
+          this.filtrarPedidos();
+        }
+      },
+      error: (error) => {
+        console.error('Error cargando pedidos:', error);
+      },
+    });
   }
 
-  /*Conteos para el header de stats*/
-  get pedidosPendientes():    number { return this.ordenes.filter(o => o.estado === 'PENDIENTE').length; }
-  get pedidosEnPreparacion(): number { return this.ordenes.filter(o => o.estado === 'EN_PREPARACION').length; }
-  get pedidosListos():        number { return this.ordenes.filter(o => o.estado === 'LISTO').length; }
-
-  contarPorEstado(tab: string): number {
-    if (tab === 'TODOS') return this.ordenes.length;
-    return this.ordenes.filter(o => o.estado === tab).length;
+  formatearNumeroPedido(id: number): string {
+    return `PED-${id.toString().padStart(4, '0')}`;
   }
 
-  /*FIFO: más antiguo primero (RF-04)*/
-  get pedidosFiltrados(): OrdenProduccion[] {
-    const lista = this.tabActivo === 'TODOS'
-      ? [...this.ordenes]
-      : this.ordenes.filter(o => o.estado === this.tabActivo);
-
-    return lista.sort((a, b) => a.timestampLlegada.getTime() - b.timestampLlegada.getTime());
+  calcularMinutosEspera(fechaRegistro: string): number {
+    const registro = new Date(fechaRegistro);
+    const ahora = new Date();
+    const diffMs = ahora.getTime() - registro.getTime();
+    return Math.floor(diffMs / 60000);
   }
 
-  cambiarTab(tab: string): void {
+  calcularProgreso(fechaRegistro: string): number {
+    const minutos = this.calcularMinutosEspera(fechaRegistro);
+    return Math.min(100, (minutos / 20) * 100);
+  }
+
+  formatearHoraEntrega(fechaRegistro: string): string {
+    const fecha = new Date(fechaRegistro);
+    fecha.setHours(fecha.getHours() + 5);
+    return fecha.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  iniciarReloj(): void {
+    this.relojSubscription = interval(1000).subscribe(() => {
+      const ahora = new Date();
+      this.horaActual = ahora.toLocaleTimeString('es-PE', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+      if (ahora.getSeconds() === 0) {
+        this.actualizarMinutosEspera();
+      }
+    });
+  }
+
+  actualizarMinutosEspera(): void {
+    this.pedidos.forEach((p) => {
+      p.minutosEspera = this.calcularMinutosEspera(p.fechaRegistro);
+    });
+  }
+
+  actualizarStats(): void {
+    this.pedidosPendientes = this.pedidos.filter((p) => p.estado === 'PENDIENTE').length;
+    this.pedidosEnPreparacion = this.pedidos.filter((p) => p.estado === 'EN_PREPARACION').length;
+    this.pedidosListos = this.pedidos.filter((p) => p.estado === 'LISTO').length;
+  }
+
+  cambiarTab(tab: 'TODOS' | 'PENDIENTE' | 'EN_PREPARACION' | 'LISTO'): void {
     this.tabActivo = tab;
+    this.filtrarPedidos();
   }
 
-  getBadgeClass(estado: string): string {
-    const map: Record<string, string> = {
-      'PENDIENTE':      'kds-badge--pendiente',
-      'EN_PREPARACION': 'kds-badge--preparacion',
-      'LISTO':          'kds-badge--listo',
-    };
-    return map[estado] || '';
+  filtrarPedidos(): void {
+    if (this.tabActivo === 'TODOS') {
+      this.pedidosFiltrados = [...this.pedidos];
+    } else {
+      this.pedidosFiltrados = this.pedidos.filter((p) => p.estado === this.tabActivo);
+    }
   }
 
-  getEstadoLabel(estado: string): string {
-    const map: Record<string, string> = {
-      'PENDIENTE':      'Pendiente',
-      'EN_PREPARACION': 'En Preparación',
-      'LISTO':          'Listo',
-    };
-    return map[estado] || estado;
+  iniciarPreparacion(pedido: PedidoCocina & { numeroPedido?: string }): void {
+    this.pedidoService.iniciarPreparacion(pedido.idPedido).subscribe({
+      next: (response) => {
+        if (response.success) {
+          pedido.estado = 'EN_PREPARACION';
+          pedido.progreso = 0;
+          this.actualizarStats();
+          this.filtrarPedidos();
+        }
+      },
+      error: (error) => {
+        console.error('Error al iniciar preparación:', error);
+        alert('No se pudo iniciar la preparación');
+      },
+    });
   }
 
-  /*Acciones en produccion*/
-  /*RF-07 / RF-08 / RF-09 */
-  iniciarPreparacion(orden: OrdenProduccion): void {
-    orden.estado = 'EN_PREPARACION';
-    orden.progreso = 5;
-    console.log(`[RF-08] Orden #${orden.numeroPedido} → EN_PREPARACION`);
+  marcarListo(pedido: PedidoCocina & { numeroPedido?: string }): void {
+    this.pedidoService.marcarPedidoListo(pedido.idPedido).subscribe({
+      next: (response) => {
+        if (response.success) {
+          pedido.estado = 'LISTO';
+          this.actualizarStats();
+          this.filtrarPedidos();
+        }
+      },
+      error: (error) => {
+        console.error('Error al marcar como listo:', error);
+        alert('No se pudo marcar el pedido como listo');
+      },
+    });
   }
 
-  /*RF-10 / RF-11 / RF-12 */
-  despacharPedido(orden: OrdenProduccion): void {
-    orden.estado = 'LISTO';
-    orden.progreso = 100;
-     // aqui va el RF-11
-    console.log(`[RF-10] Orden #${orden.numeroPedido} → LISTO. Notificando a mostrador/repartidor.`);
-
-    // RF-12: Eliminar de pantalla tras 4 segundos
-    setTimeout(() => {
-      this.ordenes = this.ordenes.filter(o => o.id !== orden.id);
-    }, 4000);
-  }
-
-  /*merma (RF-13 a RF-17)*/
-  /*RF-13 */
-  abrirModalMerma(orden: OrdenProduccion): void {
-    this.pedidoSeleccionado = orden;
+  abrirModalMerma(pedido: PedidoCocina & { numeroPedido?: string }): void {
+    this.pedidoSeleccionado = pedido;
     this.itemMermaSeleccionado = null;
-    this.causaSeleccionada = '';
+    this.causaSeleccionada = undefined;
     this.mostrarModalMerma = true;
   }
 
   cerrarModalMerma(): void {
     this.mostrarModalMerma = false;
-    this.pedidoSeleccionado = null;
+    this.pedidoSeleccionado = undefined;
+    this.itemMermaSeleccionado = null;
+    this.causaSeleccionada = undefined;
   }
 
-  seleccionarItemMerma(item: ItemPedido): void {
+  seleccionarItemMerma(item: any): void {
     this.itemMermaSeleccionado = item;
   }
 
-  /*RF-14 */
-  seleccionarCausa(causa: string): void {
-    this.causaSeleccionada = causa;
+  seleccionarCausa(causaValue: string): void {
+    const causa = this.causasMerma.find((c) => c.value === causaValue);
+    this.causaSeleccionada = causa?.id;
   }
 
-  /*RF-15 / RF-16 / RF-17 */
   confirmarMerma(): void {
-    if (!this.pedidoSeleccionado || !this.itemMermaSeleccionado || !this.causaSeleccionada) return;
+    if (!this.pedidoSeleccionado || !this.itemMermaSeleccionado || !this.causaSeleccionada) {
+      alert('Debe seleccionar un ítem y una causa');
+      return;
+    }
 
-    const payload = {
-      pedidoId:   this.pedidoSeleccionado.id,
-      item:       this.itemMermaSeleccionado.nombre,
-      causa:      this.causaSeleccionada,
+    const request = {
+      idProducto: this.itemMermaSeleccionado.idProducto,
+      idMotivo: this.causaSeleccionada,
+      observacion: `${this.itemMermaSeleccionado.nombreProducto} - ${this.causasMerma.find((c) => c.id === this.causaSeleccionada)?.nombre}`,
     };
 
-    console.log('[RF-15] Registrando merma y descontando stock:', payload);
+    this.pedidoService.registrarMerma(this.pedidoSeleccionado.idPedido, request).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.cargarPedidos();
+          this.cerrarModalMerma();
+        }
+      },
+      error: (error) => {
+        console.error('Error al registrar merma:', error);
+        alert('Error al registrar merma. Intente nuevamente.');
+      },
+    });
+  }
 
-    // RF-17: Reiniciar a PENDIENTE y resetear cronómetro
-    this.pedidoSeleccionado.estado = 'PENDIENTE';
-    this.pedidoSeleccionado.progreso = 0;
-    this.pedidoSeleccionado.timestampLlegada = new Date();
-    this.pedidoSeleccionado.minutosEspera = 0;
+  getBadgeClass(estado: string): string {
+    const clases: Record<string, string> = {
+      PENDIENTE: 'kds-badge--pendiente',
+      EN_PREPARACION: 'kds-badge--preparacion',
+      LISTO: 'kds-badge--listo',
+    };
+    return clases[estado] || '';
+  }
 
-    console.log(`[RF-17] Orden #${this.pedidoSeleccionado.numeroPedido} → PENDIENTE (SLA reiniciado).`);
-    this.cerrarModalMerma();
+  getEstadoLabel(estado: string): string {
+    const labels: Record<string, string> = {
+      PENDIENTE: 'Pendiente',
+      EN_PREPARACION: 'En Prep.',
+      LISTO: 'Listo',
+    };
+    return labels[estado] || estado;
+  }
+
+  trackById(index: number, item: PedidoCocina & { numeroPedido?: string }): number {
+    return item.idPedido;
+  }
+
+  contarPorEstado(estado: 'TODOS' | 'PENDIENTE' | 'EN_PREPARACION' | 'LISTO'): number {
+    if (estado === 'TODOS') return this.pedidos.length;
+    return this.pedidos.filter((p) => p.estado === estado).length;
   }
 }
