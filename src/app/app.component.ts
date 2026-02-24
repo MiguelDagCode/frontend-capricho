@@ -14,33 +14,34 @@ import { TokenService } from './Auth/Services/token.service';
 })
 export class AppComponent implements OnInit {
   title = 'capricho-dulce-frontend';
-  
-  // Variable reactiva para saber si está logueado
+
   isLoggedIn$: Observable<boolean>;
-  
-  // Variable para guardar el correo a mostrar
   userEmail: string | null = '';
+
+  // true cuando el usuario logueado tiene rol PASTELERO
+  esPastelero: boolean = false;
 
   constructor(
     private authService: AuthService,
     private tokenService: TokenService
   ) {
-    // Escuchamos el estado global de la autenticación
     this.isLoggedIn$ = this.authService.isLoggedIn$;
   }
 
   ngOnInit(): void {
-    // Cada vez que el estado cambie (entra o sale), actualizamos el correo
     this.isLoggedIn$.subscribe(isLoggedIn => {
       if (isLoggedIn) {
-        this.userEmail = this.tokenService.getUserName(); // Extrae el "sub" (email) del token
+        this.userEmail  = this.tokenService.getUserName();
+        // Leemos el rol del JWT y activamos la bandera
+        const rol = this.tokenService.getUserRole();
+        this.esPastelero = rol === 'PASTELERO';
       } else {
-        this.userEmail = null;
+        this.userEmail   = null;
+        this.esPastelero = false;
       }
     });
   }
 
-  // Método que llamaremos desde el HTML
   logout(): void {
     this.authService.logout();
   }

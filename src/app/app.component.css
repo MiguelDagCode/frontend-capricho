@@ -7,26 +7,13 @@
   font-family: 'Playfair Display', Georgia, serif;
 }
 
-/* Forzamos que el header siempre esté por encima de cualquier otro elemento sticky */
 .main-header {
-  z-index: 1050 !important; 
+  z-index: 1050 !important;
 }
 
-.bg-brand-primary {
-  background-color: var(--brand-primary) !important;
-}
-
-.bg-brand-footer {
-  background-color: var(--brand-footer-bg) !important;
-}
-
-.text-brand-primary {
-  color: var(--brand-primary) !important;
-}
-
-.cart-badge {
-  font-size: 0.6rem;
-}
+.bg-brand-primary  { background-color: var(--brand-primary) !important; }
+.bg-brand-footer   { background-color: var(--brand-footer-bg) !important; }
+.text-brand-primary { color: var(--brand-primary) !important; }
 
 .nav-action-link {
   display: flex;
@@ -34,15 +21,23 @@
   transition: color 0.2s ease-in-out;
 }
 
-.nav-action-link:hover {
-  color: var(--brand-primary) !important;
-}
+.nav-action-link:hover { color: var(--brand-primary) !important; }
 
-.w-20px {
-  width: 20px;
-}
+.w-20px    { width: 20px; }
+.footer-logo { height: 30px; filter: brightness(0) invert(1); }
 
-.footer-logo {
-  height: 30px;
-  filter: brightness(0) invert(1);
+/*chip de rol para el pastelero*/
+.role-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(209, 77, 104, 0.1);
+  border: 1px solid rgba(209, 77, 104, 0.25);
+  color: var(--brand-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }

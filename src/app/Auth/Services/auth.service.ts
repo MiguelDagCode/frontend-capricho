@@ -44,7 +44,7 @@ login(credentials: LoginRequest): Observable<LoginResponse> {
     const role = this.tokenService.getUserRole();
     switch (role) {
       case 'CLIENTE': this.router.navigate(['/menu-cliente']); break;
-      case 'PASTELERO': this.router.navigate(['/mozo-menu']); break;
+      case 'PASTELERO': this.router.navigate(['/menu-pastelero']); break;
       case 'ADMIN': this.router.navigate(['/cajero-menu']); break;
       default: this.router.navigate(['']); 
     }
