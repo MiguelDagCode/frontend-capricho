@@ -4,21 +4,23 @@
   <div class="kds-tabs-bar px-4 d-flex align-items-center gap-2 flex-wrap">
 
     <div class="kds-page-title me-3">
-      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" class="me-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="none" stroke="currentColor"
+        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" class="me-2">
         <path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"></path>
         <path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"></path>
         <path d="M2 21h20"></path>
-        <path d="M7 8v3"></path><path d="M12 8v3"></path><path d="M17 8v3"></path>
-        <path d="M7 4h.01"></path><path d="M12 4h.01"></path><path d="M17 4h.01"></path>
+        <path d="M7 8v3"></path>
+        <path d="M12 8v3"></path>
+        <path d="M17 8v3"></path>
+        <path d="M7 4h.01"></path>
+        <path d="M12 4h.01"></path>
+        <path d="M17 4h.01"></path>
       </svg>
       Producción — Cocina
     </div>
 
     <!--tabs-->
-    <button
-      *ngFor="let tab of tabs"
-      class="kds-tab-btn"
-      [class.active]="tabActivo === tab.value"
+    <button *ngFor="let tab of tabs" class="kds-tab-btn" [class.active]="tabActivo === tab.value"
       (click)="cambiarTab(tab.value)">
       {{ tab.label }}
       <span class="kds-tab-count" *ngIf="contarPorEstado(tab.value) > 0">{{ contarPorEstado(tab.value) }}</span>
@@ -47,7 +49,8 @@
 
     <!--estado vacio -->
     <div class="kds-empty-state" *ngIf="pedidosFiltrados.length === 0">
-      <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" class="mb-3">
+      <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" fill="none" stroke="currentColor" stroke-width="1"
+        stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" class="mb-3">
         <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path>
         <rect x="9" y="3" width="6" height="4" rx="2"></rect>
       </svg>
@@ -56,9 +59,7 @@
 
     <!--tarjetas-->
     <div class="kds-cards-grid">
-      <div
-        class="kds-card"
-        [class.kds-card--pendiente]="pedido.estado === 'PENDIENTE'"
+      <div class="kds-card" [class.kds-card--pendiente]="pedido.estado === 'PENDIENTE'"
         [class.kds-card--preparacion]="pedido.estado === 'EN_PREPARACION'"
         [class.kds-card--listo]="pedido.estado === 'LISTO'"
         [class.kds-card--urgente]="pedido.minutosEspera >= 20 && pedido.estado !== 'LISTO'"
@@ -73,13 +74,29 @@
             </span>
             <!--tipo de entrega-->
             <span class="kds-entrega-badge" [class.kds-entrega--delivery]="pedido.tipoEntrega === 'DELIVERY'">
-              <svg *ngIf="pedido.tipoEntrega === 'DELIVERY'" xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-              <svg *ngIf="pedido.tipoEntrega === 'RECOJO_TIENDA'" xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-              {{ pedido.tipoEntrega === 'DELIVERY' ? 'Delivery' : 'En tienda' }}
+              <svg *ngIf="pedido.tipoEntrega === 'DELIVERY'" xmlns="http://www.w3.org/2000/svg" width="11" height="11"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                viewBox="0 0 24 24">
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+              </svg>
+              <svg *ngIf="pedido.tipoEntrega === 'RECOJO_TIENDA'" xmlns="http://www.w3.org/2000/svg" width="11"
+                height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              {{ pedido.tipoEntrega === 'DELIVERY' ? 'Delivery' : 'Recojo en tienda' }}
             </span>
           </div>
           <div class="kds-timer" [class.kds-timer--urgente]="pedido.minutosEspera >= 20 && pedido.estado !== 'LISTO'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor"
+              stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
             {{ pedido.minutosEspera }}m
           </div>
         </div>
@@ -87,11 +104,19 @@
         <!--info del cliente y hora de entrega prometida-->
         <div class="kds-card-client">
           <div class="kds-client-row">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" stroke="currentColor"
+              stroke-width="2" viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
             <span class="kds-client-name">{{ pedido.nombreCliente || 'Cliente' }}</span>
           </div>
           <div class="kds-hora-entrega" *ngIf="pedido.horaEntregaPrometida">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor"
+              stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
             Entrega: <strong>{{ pedido.horaEntregaPrometida }}</strong>
           </div>
         </div>
@@ -106,7 +131,12 @@
             <div class="flex-grow-1">
               <span class="kds-item-name">{{ item.nombreProducto }}</span>
               <div class="kds-item-spec" *ngIf="item.observaciones">
-                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" stroke="currentColor"
+                  stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
                 {{ item.observaciones }}
               </div>
             </div>
@@ -124,7 +154,10 @@
           <!--pendiente-->
           <ng-container *ngIf="pedido.estado === 'PENDIENTE'">
             <button class="btn kds-btn-iniciar w-100" (click)="iniciarPreparacion(pedido)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                <path
+                  d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z" />
+              </svg>
               Iniciar Preparación
             </button>
           </ng-container>
@@ -133,11 +166,20 @@
           <ng-container *ngIf="pedido.estado === 'EN_PREPARACION'">
             <div class="d-flex gap-2">
               <button class="btn kds-btn-merma flex-shrink-0" (click)="abrirModalMerma(pedido)" title="Reportar Merma">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                  </path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
                 Merma
               </button>
               <button class="btn kds-btn-despachar flex-grow-1" (click)="marcarListo(pedido)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor"
+                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
                 Pedido Listo
               </button>
             </div>
@@ -146,7 +188,10 @@
           <!--listo-->
           <ng-container *ngIf="pedido.estado === 'LISTO'">
             <div class="kds-done-badge">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor"
+                stroke-width="2.5" viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
               Listo para {{ pedido.tipoEntrega === 'DELIVERY' ? 'repartidor' : 'mostrador' }}
             </div>
           </ng-container>
@@ -165,7 +210,11 @@
           <h5 class="mb-0 fw-semibold">Reportar Merma</h5>
         </div>
         <button class="kds-modal-close" (click)="cerrarModalMerma()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       </div>
 
@@ -177,24 +226,22 @@
 
         <label class="kds-form-label">Ítem afectado</label>
         <div class="kds-item-selector">
-          <div
-            class="kds-item-option"
-            [class.selected]="itemMermaSeleccionado?.idProducto === item.idProducto"
-            *ngFor="let item of pedidoSeleccionado?.detalles"
-            (click)="seleccionarItemMerma(item)">
+          <div class="kds-item-option" [class.selected]="itemMermaSeleccionado?.idProducto === item.idProducto"
+            *ngFor="let item of pedidoSeleccionado?.detalles" (click)="seleccionarItemMerma(item)">
             <span class="kds-item-opt-qty">{{ item.cantidad }}x</span>
             <span class="flex-grow-1">{{ item.nombreProducto }}</span>
-            <svg class="kds-check-icon" *ngIf="itemMermaSeleccionado?.idProducto === item.idProducto" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <svg class="kds-check-icon" *ngIf="itemMermaSeleccionado?.idProducto === item.idProducto"
+              xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" stroke="currentColor"
+              stroke-width="2.5" viewBox="0 0 24 24">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
           </div>
         </div>
 
         <label class="kds-form-label mt-3">Causa de la merma</label>
         <div class="kds-causa-grid">
-          <button
-            class="kds-causa-btn"
-            *ngFor="let causa of causasMerma"
-            [class.selected]="causaSeleccionada === causa.id"
-            (click)="seleccionarCausa(causa.value)">
+          <button class="kds-causa-btn" *ngFor="let causa of causasMerma"
+            [class.selected]="causaSeleccionada === causa.id" (click)="seleccionarCausa(causa.value)">
             <span class="kds-causa-icon">{{ causa.icon }}</span>
             <span>{{ causa.nombre }}</span>
           </button>
@@ -203,9 +250,7 @@
 
       <div class="kds-modal-footer">
         <button class="btn kds-btn-cancel" (click)="cerrarModalMerma()">Cancelar</button>
-        <button
-          class="btn kds-btn-confirmar-merma"
-          [disabled]="!itemMermaSeleccionado || !causaSeleccionada"
+        <button class="btn kds-btn-confirmar-merma" [disabled]="!itemMermaSeleccionado || !causaSeleccionada"
           (click)="confirmarMerma()">
           Confirmar y Reiniciar
         </button>
